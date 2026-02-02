@@ -1,0 +1,19 @@
+import entity/comment
+import gleam/dynamic/decode
+import gleam/json
+
+pub fn comment_to_json(comment: comment.Comment) -> json.Json {
+  case comment {
+    comment.Comment(id:, message:) ->
+      json.object([
+        #("id", json.int(id)),
+        #("message", json.string(message)),
+      ])
+  }
+}
+
+pub fn comment_json_decoder() -> decode.Decoder(comment.Comment) {
+  use id <- decode.field("id", decode.int)
+  use message <- decode.field("message", decode.string)
+  decode.success(comment.Comment(id:, message:))
+}
