@@ -85,12 +85,20 @@ pub fn my_builder() {
 
 Create a new gleam project inside your existing project `gleam new build_runner`
 
-```bash
-gleam new build_runner
-cd build_runner
-```
+> **Why having an extra gleam project ?**
+>
+> The build_runner is a **separate Gleam project** that **must remain compilable** even when your **main gleam project's `src` directory contains broken or malformed code**.
+(This can happen if you write a builder that generates invalid code)
+If other builders were inside your main project, you wouldn't be able to run the build_runner if `src` contain errors, preventing you to rerun your build_runner.
+By keeping the build_runner as an independent project and linking it as a dev dependency to your main one, you can always rerun it to regenerate and fix problematic code beside having a broken `src`.
+>
+> Note: *Also having the build_runner into a separate Gleam project make it easier to share it configuration in a monorepo situation*
 
-Install `builder` modules. (Not dev dependencies)
+Install both `builder` as **regular dependencies** (not dev dependencies) **in your build_runner project**:
+
+```sh
+gleam add builder
+```
 
 Edit `src/build_runner.gleam`:
 
@@ -105,7 +113,7 @@ pub fn main() {
 }
 ```
 
-Make your main project depend on the build runner:
+Make your main project depend on the build runner as a dev dependency:
 
 ```toml
 [dev-dependencies]
